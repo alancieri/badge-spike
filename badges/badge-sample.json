@@ -1,0 +1,39 @@
+{
+  "id": "a9f8b1d2-3c45-4e12-9f78-1a2b3c4d5e6f",
+  "slug": "education_missions_10",
+  "version": 1,
+
+  "tenantId": null,
+
+  "title": {
+    "default": "Educator Level 1",
+    "it": "Educatore Livello 1",
+    "fr": "Éducateur Niveau 1"
+  },
+
+  "subtitle": {
+    "default": "First Achievement in Education",
+    "it": "Primo traguardo nell’educazione",
+    "fr": "Premier objectif en éducation"
+  },
+
+  "description": {
+    "default": "Complete 10 educational missions.",
+    "it": "Completa 10 missioni educative.",
+    "fr": "Complétez 10 missions éducatives."
+  },
+
+  "category": "education",
+  "rarity": "common",
+  "tags": ["missions", "education", "starter"],
+
+  "icon": {
+    "url": "https://cdn.aworld.org/badges/education_10.png",
+    "darkUrl": "https://cdn.aworld.org/badges/education_10_dark.png"
+  },
+
+  "createdAt": "2025-01-14T10:30:00Z",
+  "createdBy": "admin@aworld.org",
+  "updatedAt": "2025-01-14T10:30:00Z",
+  "updatedBy": "admin@aworld.org"
+}

@@ -1,0 +1,51 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Form inputs focus state */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Button hover states */
+button:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+/* Link buttons */
+a {
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+/* Responsive layout for creator */
+@media (max-width: 768px) {
+  .creator-layout {
+    flex-direction: column !important;
+  }
+
+  .creator-preview {
+    width: 100% !important;
+    position: static !important;
+  }
+}
