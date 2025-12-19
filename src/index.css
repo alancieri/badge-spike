@@ -1,41 +1,27 @@
-* {
-  box-sizing: border-box;
+@import "tailwindcss";
+
+@theme {
+  --font-family-sans: 'Geist', system-ui, sans-serif;
+  --font-family-mono: 'Geist Mono', monospace;
+  --color-border: #e5e7eb;
 }
 
+/* Base styles */
 body {
-  margin: 0;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family-sans);
+  color: #1f2937;
+  background-color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
+  line-height: 1.7;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Form inputs focus state */
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-/* Button hover states */
-button:hover:not(:disabled) {
-  filter: brightness(0.95);
-}
-
-/* Link buttons */
-a {
-  transition: opacity 0.2s;
-}
-
-a:hover {
-  opacity: 0.85;
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3;
 }
 
 /* Responsive layout for creator */

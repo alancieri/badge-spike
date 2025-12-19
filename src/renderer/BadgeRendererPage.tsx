@@ -9,9 +9,11 @@ import {
   PRIMARY_COLORS,
 } from '../types/badge';
 import { BadgeRenderer } from './BadgeRenderer';
+import { useRightSidebar } from '../components/layout';
 
 export function BadgeRendererPage() {
   const { id } = useParams<{ id: string }>();
+  const { setContent } = useRightSidebar();
   const [badge, setBadge] = useState<Badge | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +21,97 @@ export function BadgeRendererPage() {
   // Override controls
   const [templateOverride, setTemplateOverride] = useState<BadgeTemplate | ''>('');
   const [colorOverride, setColorOverride] = useState<string>('');
+
+  // Set right sidebar content
+  useEffect(() => {
+    if (!badge) {
+      setContent(null);
+      return;
+    }
+
+    setContent(
+      <>
+        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
+          Override Test
+        </h3>
+        <div className="bg-white p-4 rounded-xl border border-gray-200">
+          {/* Template Override */}
+          <div className="mb-4">
+            <label className="block text-xs text-gray-500 mb-1.5">
+              Template
+            </label>
+            <select
+              value={templateOverride}
+              onChange={(e) => setTemplateOverride(e.target.value as BadgeTemplate | '')}
+              className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            >
+              <option value="">Default (dal badge)</option>
+              {BADGE_TEMPLATES.map((t) => (
+                <option key={t} value={t}>
+                  {TEMPLATE_CONFIG[t].label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Color Override */}
+          <div className="mb-4">
+            <label className="block text-xs text-gray-500 mb-1.5">
+              Colore
+            </label>
+            <div className="flex gap-1.5 flex-wrap">
+              <button
+                onClick={() => setColorOverride('')}
+                className={`w-6 h-6 rounded flex items-center justify-center text-xs border transition-all ${
+                  colorOverride === ''
+                    ? 'border-gray-900 bg-gray-100'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                title="Default"
+              >
+                ✕
+              </button>
+              {PRIMARY_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  onClick={() => setColorOverride(c.value)}
+                  className={`w-6 h-6 rounded transition-all ${
+                    colorOverride === c.value
+                      ? 'ring-2 ring-gray-900 ring-offset-1'
+                      : 'hover:scale-110'
+                  }`}
+                  style={{ backgroundColor: c.value }}
+                  title={c.label}
+                />
+              ))}
+              <input
+                type="color"
+                value={colorOverride || badge.primaryColor || '#2563eb'}
+                onChange={(e) => setColorOverride(e.target.value)}
+                className="w-6 h-6 rounded cursor-pointer border border-gray-200"
+                title="Personalizzato"
+              />
+            </div>
+          </div>
+
+          {/* Reset button */}
+          {(templateOverride || colorOverride) && (
+            <button
+              onClick={() => {
+                setTemplateOverride('');
+                setColorOverride('');
+              }}
+              className="w-full px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Reset Override
+            </button>
+          )}
+        </div>
+      </>
+    );
+
+    return () => setContent(null);
+  }, [badge, templateOverride, colorOverride, setContent]);
 
   useEffect(() => {
     if (!id) return;
@@ -42,213 +135,75 @@ export function BadgeRendererPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <p>Caricamento...</p>
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">Caricamento...</p>
       </div>
     );
   }
 
   if (error || !badge) {
     return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <p style={{ color: '#dc2626' }}>{error || 'Badge non trovato'}</p>
-        <Link to="/" style={{ color: '#2563eb' }}>
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <p className="text-red-600">{error || 'Badge non trovato'}</p>
+        <Link to="/" className="text-gray-600 hover:text-gray-900">
           Torna alla lista
         </Link>
       </div>
     );
   }
 
-  const selectStyle: React.CSSProperties = {
-    padding: '6px 10px',
-    fontSize: 13,
-    border: '1px solid #d1d5db',
-    borderRadius: 6,
-    backgroundColor: '#fff',
-  };
-
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 40,
-        backgroundColor: '#f8fafc',
-      }}
-    >
-      {/* Override Controls */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 16,
-          right: 16,
-          padding: 16,
-          backgroundColor: '#fff',
-          borderRadius: 10,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
-          fontSize: 13,
-          zIndex: 100,
-        }}
-      >
-        <span style={{ fontWeight: 600, color: '#374151' }}>Override Test</span>
-
-        {/* Template Override */}
-        <div>
-          <label style={{ display: 'block', marginBottom: 4, color: '#6b7280' }}>
-            Template
-          </label>
-          <select
-            value={templateOverride}
-            onChange={(e) => setTemplateOverride(e.target.value as BadgeTemplate | '')}
-            style={selectStyle}
-          >
-            <option value="">Default (dal badge)</option>
-            {BADGE_TEMPLATES.map((t) => (
-              <option key={t} value={t}>
-                {TEMPLATE_CONFIG[t].label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Color Override */}
-        <div>
-          <label style={{ display: 'block', marginBottom: 4, color: '#6b7280' }}>
-            Colore
-          </label>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setColorOverride('')}
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 4,
-                border: colorOverride === '' ? '2px solid #0f172a' : '1px solid #d1d5db',
-                backgroundColor: '#fff',
-                cursor: 'pointer',
-                fontSize: 10,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              title="Default"
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="h-[72px] border-b border-gray-200 bg-white">
+        <div className="px-8 h-full flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900 leading-tight">
+              {badge.title?.default || 'Badge'}
+            </h1>
+            {badge.subtitle?.default && (
+              <p className="text-sm text-gray-500">{badge.subtitle.default}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/"
+              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
             >
-              ✕
-            </button>
-            {PRIMARY_COLORS.map((c) => (
-              <button
-                key={c.value}
-                onClick={() => setColorOverride(c.value)}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 4,
-                  backgroundColor: c.value,
-                  border: colorOverride === c.value ? '2px solid #0f172a' : 'none',
-                  cursor: 'pointer',
-                }}
-                title={c.label}
-              />
-            ))}
-            <input
-              type="color"
-              value={colorOverride || badge.primaryColor || '#2563eb'}
-              onChange={(e) => setColorOverride(e.target.value)}
-              style={{
-                width: 24,
-                height: 24,
-                padding: 0,
-                border: '1px solid #d1d5db',
-                borderRadius: 4,
-                cursor: 'pointer',
-              }}
-              title="Personalizzato"
-            />
+              Annulla
+            </Link>
+            <Link
+              to={`/creator/${id}`}
+              className="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Modifica
+            </Link>
           </div>
         </div>
-
-        {/* Reset button */}
-        {(templateOverride || colorOverride) && (
-          <button
-            onClick={() => {
-              setTemplateOverride('');
-              setColorOverride('');
-            }}
-            style={{
-              padding: '6px 12px',
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #d1d5db',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 12,
-            }}
-          >
-            Reset Override
-          </button>
-        )}
       </div>
 
-      <BadgeRenderer
-        badge={badge}
-        size="large"
-        templateOverride={templateOverride || undefined}
-        primaryColorOverride={colorOverride || undefined}
-      />
+      {/* Content */}
+      <div className="px-8 py-8 flex flex-col items-center">
+        {/* Badge Preview */}
+        <div className="bg-gray-50 rounded-xl p-8 flex items-center justify-center border border-gray-100 mb-8 w-full max-w-4xl">
+          <BadgeRenderer
+            badge={badge}
+            size="large"
+            templateOverride={templateOverride || undefined}
+            primaryColorOverride={colorOverride || undefined}
+          />
+        </div>
 
-      <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
-        <Link
-          to={`/creator/${id}`}
-          style={{
-            padding: '10px 24px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: 8,
-            fontWeight: 500,
-          }}
-        >
-          Modifica
-        </Link>
-        <Link
-          to="/"
-          style={{
-            padding: '10px 24px',
-            backgroundColor: '#f1f5f9',
-            color: '#1e293b',
-            textDecoration: 'none',
-            borderRadius: 8,
-            fontWeight: 500,
-          }}
-        >
-          Torna alla lista
-        </Link>
+        {/* JSON */}
+        <div className="rounded-lg overflow-hidden border border-gray-200 w-full max-w-4xl">
+          <div className="bg-gray-100 px-4 py-2 border-b border-gray-200">
+            <span className="text-sm text-gray-600 font-mono">badge.json</span>
+          </div>
+          <pre className="p-4 bg-gray-900 text-gray-100 overflow-auto text-xs font-mono leading-relaxed">
+            {JSON.stringify(badge, null, 2)}
+          </pre>
+        </div>
       </div>
-
-      {/* JSON debug */}
-      <details style={{ marginTop: 40, width: '100%', maxWidth: 600 }}>
-        <summary style={{ cursor: 'pointer', color: '#6b7280' }}>
-          Mostra JSON
-        </summary>
-        <pre
-          style={{
-            marginTop: 12,
-            padding: 16,
-            backgroundColor: '#1f2937',
-            color: '#f9fafb',
-            borderRadius: 8,
-            overflow: 'auto',
-            fontSize: 12,
-          }}
-        >
-          {JSON.stringify(badge, null, 2)}
-        </pre>
-      </details>
     </div>
   );
 }
