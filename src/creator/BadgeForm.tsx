@@ -60,7 +60,6 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
   const handleIconUpload = async (file: File, isDark: boolean) => {
     const currentIcon = badge.icon || { url: '' };
 
-    // Elimina la vecchia immagine prima di caricare la nuova
     const oldUrl = isDark ? currentIcon.darkUrl : currentIcon.url;
     if (oldUrl) {
       await deleteBadgeIconByUrl(oldUrl);
@@ -78,12 +77,10 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
     const currentIcon = badge.icon || { url: '' };
     const urlToDelete = isDark ? currentIcon.darkUrl : currentIcon.url;
 
-    // Elimina il file da Supabase
     if (urlToDelete) {
       await deleteBadgeIconByUrl(urlToDelete);
     }
 
-    // Aggiorna lo state
     if (isDark) {
       updateField('icon', { ...currentIcon, darkUrl: undefined });
     } else {
@@ -99,54 +96,34 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
     updateField('tags', tags);
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '10px 12px',
-    fontSize: 14,
-    border: '1px solid #d1d5db',
-    borderRadius: 6,
-    boxSizing: 'border-box',
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontSize: 14,
-    fontWeight: 500,
-    color: '#374151',
-    marginBottom: 6,
-  };
-
-  const fieldGroupStyle: React.CSSProperties = {
-    marginBottom: 20,
-  };
+  const inputClasses = `
+    w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg
+    transition-all duration-150
+    focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent
+    disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
+  `;
 
   return (
-    <div style={{ maxWidth: 500 }}>
+    <div className="max-w-md space-y-6">
       {/* Slug */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Slug</label>
-        <div style={{ display: 'flex', gap: 8 }}>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Slug
+        </label>
+        <div className="flex gap-2">
           <input
             type="text"
             value={badge.slug || ''}
             onChange={(e) => updateField('slug', e.target.value)}
             placeholder="education_missions_10"
             disabled={disabled}
-            style={{ ...inputStyle, flex: 1 }}
+            className={`${inputClasses} flex-1`}
           />
           <button
             type="button"
             onClick={handleAutoSlug}
             disabled={disabled || !badge.title?.default}
-            style={{
-              padding: '10px 16px',
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #d1d5db',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 13,
-              whiteSpace: 'nowrap',
-            }}
+            className="px-3 py-2 text-sm font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Auto
           </button>
@@ -154,29 +131,16 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
       </div>
 
       {/* Language tabs */}
-      <div style={{ marginBottom: 20 }}>
-        <div
-          style={{
-            display: 'flex',
-            gap: 4,
-            borderBottom: '1px solid #e5e7eb',
-            marginBottom: 16,
-            flexWrap: 'wrap',
-          }}
-        >
+      <div>
+        <div className="flex gap-1 border-b border-gray-200 mb-4 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab('default')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: activeTab === 'default' ? '#2563eb' : 'transparent',
-              color: activeTab === 'default' ? 'white' : '#6b7280',
-              border: 'none',
-              borderRadius: '6px 6px 0 0',
-              cursor: 'pointer',
-              fontWeight: 500,
-              fontSize: 13,
-            }}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
+              activeTab === 'default'
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            }`}
           >
             Default
           </button>
@@ -185,16 +149,11 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
               key={lang.code}
               type="button"
               onClick={() => setActiveTab(lang.code)}
-              style={{
-                padding: '8px 12px',
-                backgroundColor: activeTab === lang.code ? '#2563eb' : 'transparent',
-                color: activeTab === lang.code ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '6px 6px 0 0',
-                cursor: 'pointer',
-                fontWeight: 500,
-                fontSize: 13,
-              }}
+              className={`px-3 py-2 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
+                activeTab === lang.code
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              }`}
             >
               {lang.label}
             </button>
@@ -202,9 +161,9 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
         </div>
 
         {/* Title */}
-        <div style={fieldGroupStyle}>
-          <label style={labelStyle}>
-            Titolo {activeTab !== 'default' && `(${activeTab})`}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Titolo {activeTab !== 'default' && <span className="text-gray-400">({activeTab})</span>}
           </label>
           <input
             type="text"
@@ -212,14 +171,14 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
             onChange={(e) => updateLocalizedField('title', activeTab, e.target.value)}
             placeholder={activeTab === 'default' ? 'Educator Level 1' : 'Traduzione...'}
             disabled={disabled}
-            style={inputStyle}
+            className={inputClasses}
           />
         </div>
 
         {/* Subtitle */}
-        <div style={fieldGroupStyle}>
-          <label style={labelStyle}>
-            Sottotitolo {activeTab !== 'default' && `(${activeTab})`}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Sottotitolo {activeTab !== 'default' && <span className="text-gray-400">({activeTab})</span>}
           </label>
           <input
             type="text"
@@ -227,14 +186,14 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
             onChange={(e) => updateLocalizedField('subtitle', activeTab, e.target.value)}
             placeholder={activeTab === 'default' ? 'First Achievement' : 'Traduzione...'}
             disabled={disabled}
-            style={inputStyle}
+            className={inputClasses}
           />
         </div>
 
         {/* Description */}
-        <div style={fieldGroupStyle}>
-          <label style={labelStyle}>
-            Descrizione {activeTab !== 'default' && `(${activeTab})`}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Descrizione {activeTab !== 'default' && <span className="text-gray-400">({activeTab})</span>}
           </label>
           <textarea
             value={getLocalizedValue(badge.description, activeTab)}
@@ -242,19 +201,21 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
             placeholder={activeTab === 'default' ? 'Complete 10 educational missions.' : 'Traduzione...'}
             disabled={disabled}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className={`${inputClasses} resize-y`}
           />
         </div>
       </div>
 
       {/* Category */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Categoria</label>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Categoria
+        </label>
         <select
           value={badge.category || 'education'}
           onChange={(e) => updateField('category', e.target.value as Badge['category'])}
           disabled={disabled}
-          style={inputStyle}
+          className={inputClasses}
         >
           {BADGE_CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>
@@ -265,13 +226,15 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
       </div>
 
       {/* Rarity */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Rarità</label>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Rarità
+        </label>
         <select
           value={badge.rarity || 'common'}
           onChange={(e) => updateField('rarity', e.target.value as Badge['rarity'])}
           disabled={disabled}
-          style={inputStyle}
+          className={inputClasses}
         >
           {BADGE_RARITIES.map((rarity) => (
             <option key={rarity} value={rarity}>
@@ -282,13 +245,15 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
       </div>
 
       {/* Template */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Template</label>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Template
+        </label>
         <select
           value={badge.template || 'card'}
           onChange={(e) => updateField('template', e.target.value as Badge['template'])}
           disabled={disabled}
-          style={inputStyle}
+          className={inputClasses}
         >
           {BADGE_TEMPLATES.map((template) => (
             <option key={template} value={template}>
@@ -299,9 +264,11 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
       </div>
 
       {/* Primary Color */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Colore primario</label>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Colore primario
+        </label>
+        <div className="flex gap-2 flex-wrap">
           {PRIMARY_COLORS.map((color) => (
             <button
               key={color.value}
@@ -309,40 +276,21 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
               onClick={() => updateField('primaryColor', color.value)}
               disabled={disabled}
               title={color.label}
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 6,
-                backgroundColor: color.value,
-                border:
-                  badge.primaryColor === color.value
-                    ? '2px solid #0f172a'
-                    : '2px solid transparent',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                transition: 'transform 0.15s ease',
-                boxShadow:
-                  badge.primaryColor === color.value
-                    ? '0 0 0 2px #fff, 0 0 0 4px #0f172a'
-                    : 'none',
-              }}
+              className={`w-8 h-8 rounded-lg transition-all duration-150 disabled:cursor-not-allowed ${
+                badge.primaryColor === color.value
+                  ? 'ring-2 ring-gray-900 ring-offset-2'
+                  : 'hover:scale-110'
+              }`}
+              style={{ backgroundColor: color.value }}
             />
           ))}
-          {/* Custom color input */}
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             <input
               type="color"
               value={badge.primaryColor || '#2563eb'}
               onChange={(e) => updateField('primaryColor', e.target.value)}
               disabled={disabled}
-              style={{
-                width: 32,
-                height: 32,
-                padding: 0,
-                border: '2px solid #e5e7eb',
-                borderRadius: 6,
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                backgroundColor: 'transparent',
-              }}
+              className="w-8 h-8 rounded-lg cursor-pointer border-2 border-gray-200 disabled:cursor-not-allowed"
               title="Colore personalizzato"
             />
           </div>
@@ -350,15 +298,17 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
       </div>
 
       {/* Tags */}
-      <div style={fieldGroupStyle}>
-        <label style={labelStyle}>Tags (separati da virgola)</label>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Tags <span className="font-normal text-gray-400">(separati da virgola)</span>
+        </label>
         <input
           type="text"
           value={(badge.tags || []).join(', ')}
           onChange={(e) => handleTagsChange(e.target.value)}
           placeholder="missions, education, starter"
           disabled={disabled}
-          style={inputStyle}
+          className={inputClasses}
         />
       </div>
 
@@ -373,7 +323,8 @@ export function BadgeForm({ badge, onChange, badgeId, disabled = false }: BadgeF
 
       {/* Dark icon upload */}
       <ImageUploader
-        label="Icona Badge (Dark mode) - opzionale"
+        label="Icona Badge (Dark mode)"
+        hint="opzionale"
         currentUrl={badge.icon?.darkUrl}
         onUpload={(file) => handleIconUpload(file, true)}
         onClear={() => handleIconClear(true)}

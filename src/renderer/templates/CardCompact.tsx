@@ -88,14 +88,12 @@ export function CardCompact({ badge, size = 'medium', showDetails = true }: Card
         e.currentTarget.style.boxShadow = `0 2px 6px ${colors.glowColor}`;
       }}
     >
-      {/* Icon with colored accent border */}
+      {/* Icon */}
       <div
         style={{
           width: s.icon,
           height: s.icon,
           borderRadius: '50%',
-          border: `2px solid ${colors.primary}`,
-          padding: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -111,7 +109,6 @@ export function CardCompact({ badge, size = 'medium', showDetails = true }: Card
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              borderRadius: '50%',
             }}
           />
         ) : (

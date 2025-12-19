@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 
 interface ImageUploaderProps {
   label: string;
+  hint?: string;
   currentUrl?: string;
   onUpload: (file: File) => Promise<void>;
   onClear?: () => Promise<void>;
@@ -10,6 +11,7 @@ interface ImageUploaderProps {
 
 export function ImageUploader({
   label,
+  hint,
   currentUrl,
   onUpload,
   onClear,
@@ -25,14 +27,12 @@ export function ImageUploader({
   const handleFileChange = async (file: File | null) => {
     if (!file) return;
 
-    // Validate file type
     const validTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'];
     if (!validTypes.includes(file.type)) {
       alert('Formato non supportato. Usa PNG, JPG, GIF, WEBP o SVG.');
       return;
     }
 
-    // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
       alert('Il file è troppo grande. Massimo 2MB.');
       return;
@@ -70,17 +70,10 @@ export function ImageUploader({
   };
 
   return (
-    <div style={{ marginBottom: 16 }}>
-      <label
-        style={{
-          display: 'block',
-          fontSize: 14,
-          fontWeight: 500,
-          color: '#374151',
-          marginBottom: 6,
-        }}
-      >
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1.5">
         {label}
+        {hint && <span className="font-normal text-gray-400 ml-1">({hint})</span>}
       </label>
 
       <div
@@ -88,36 +81,24 @@ export function ImageUploader({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => !disabled && !isProcessing && inputRef.current?.click()}
-        style={{
-          border: `2px dashed ${dragOver ? '#2563eb' : '#d1d5db'}`,
-          borderRadius: 8,
-          padding: 20,
-          textAlign: 'center',
-          cursor: disabled || isProcessing ? 'not-allowed' : 'pointer',
-          backgroundColor: dragOver ? '#eff6ff' : '#f9fafb',
-          transition: 'all 0.2s',
-          opacity: disabled ? 0.5 : 1,
-        }}
+        className={`
+          border-2 border-dashed rounded-lg p-5 text-center transition-all
+          ${dragOver ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-gray-50/50'}
+          ${disabled || isProcessing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-gray-300'}
+        `}
       >
         {currentUrl ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+          <div className="flex items-center justify-center gap-4">
             <img
               src={currentUrl}
               alt="Preview"
-              style={{
-                width: 64,
-                height: 64,
-                objectFit: 'cover',
-                borderRadius: 8,
-                border: '1px solid #e5e7eb',
-                opacity: deleting ? 0.5 : 1,
-              }}
+              className={`w-16 h-16 object-cover rounded-lg border border-gray-200 ${deleting ? 'opacity-50' : ''}`}
             />
-            <div style={{ textAlign: 'left' }}>
-              <p style={{ margin: 0, fontSize: 13, color: '#374151' }}>
+            <div className="text-left">
+              <p className="text-sm text-gray-700">
                 {deleting ? 'Eliminazione...' : 'Immagine caricata'}
               </p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <div className="flex gap-2 mt-2">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -125,15 +106,7 @@ export function ImageUploader({
                     inputRef.current?.click();
                   }}
                   disabled={isProcessing}
-                  style={{
-                    padding: '4px 12px',
-                    fontSize: 12,
-                    backgroundColor: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                  }}
+                  className="px-3 py-1 text-xs font-medium bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50"
                 >
                   Cambia
                 </button>
@@ -153,15 +126,7 @@ export function ImageUploader({
                       }
                     }}
                     disabled={isProcessing}
-                    style={{
-                      padding: '4px 12px',
-                      fontSize: 12,
-                      backgroundColor: '#fef2f2',
-                      color: '#dc2626',
-                      border: 'none',
-                      borderRadius: 4,
-                      cursor: 'pointer',
-                    }}
+                    className="px-3 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors disabled:opacity-50"
                   >
                     Rimuovi
                   </button>
@@ -170,13 +135,28 @@ export function ImageUploader({
             </div>
           </div>
         ) : uploading ? (
-          <p style={{ margin: 0, color: '#6b7280' }}>Caricamento...</p>
+          <p className="text-sm text-gray-500">Caricamento...</p>
         ) : (
           <>
-            <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
+            <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                />
+              </svg>
+            </div>
+            <p className="text-sm text-gray-600">
               Trascina un'immagine o clicca per selezionare
             </p>
-            <p style={{ margin: '8px 0 0', color: '#9ca3af', fontSize: 12 }}>
+            <p className="text-xs text-gray-400 mt-1">
               PNG, JPG, GIF, WEBP, SVG (max 2MB)
             </p>
           </>
@@ -188,7 +168,7 @@ export function ImageUploader({
         type="file"
         accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml"
         onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-        style={{ display: 'none' }}
+        className="hidden"
         disabled={disabled || isProcessing}
       />
     </div>

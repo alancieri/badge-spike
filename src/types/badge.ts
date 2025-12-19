@@ -66,10 +66,6 @@ export const BADGE_TEMPLATES = [
   'card-horizontal',
   'card-minimal',
   'card-compact',
-  'circle',
-  'hexagon',
-  'shield',
-  'ribbon',
 ] as const;
 export type BadgeTemplate = (typeof BADGE_TEMPLATES)[number];
 
@@ -78,10 +74,6 @@ export const TEMPLATE_CONFIG: Record<BadgeTemplate, { label: string; description
   'card-horizontal': { label: 'Card Horizontal', description: 'Layout orizzontale, icona a sinistra' },
   'card-minimal': { label: 'Card Minimal', description: 'Ultra minimalista, solo essenziale' },
   'card-compact': { label: 'Card Compact', description: 'Compatto e quadrato, ideale per griglie' },
-  circle: { label: 'Circle', description: 'Stile sigillo circolare' },
-  hexagon: { label: 'Hexagon', description: 'Esagono moderno' },
-  shield: { label: 'Shield', description: 'Forma a scudo' },
-  ribbon: { label: 'Ribbon', description: 'Con nastro decorativo' },
 };
 
 // Colori primari predefiniti

@@ -1,10 +1,6 @@
 import { Badge, BadgeTemplate } from '../types/badge';
 import { BadgeCard } from './BadgeCard';
 import {
-  CircleTemplate,
-  HexagonTemplate,
-  ShieldTemplate,
-  RibbonTemplate,
   CardHorizontal,
   CardMinimal,
   CardCompact,
@@ -61,14 +57,6 @@ export function BadgeRenderer({
       return <CardMinimal badge={effectiveBadge} size={size} />;
     case 'card-compact':
       return <CardCompact badge={effectiveBadge} size={size} showDetails={showDetails} />;
-    case 'circle':
-      return <CircleTemplate badge={effectiveBadge} size={size} />;
-    case 'hexagon':
-      return <HexagonTemplate badge={effectiveBadge} size={size} />;
-    case 'shield':
-      return <ShieldTemplate badge={effectiveBadge} size={size} />;
-    case 'ribbon':
-      return <RibbonTemplate badge={effectiveBadge} size={size} />;
     case 'card':
     default:
       return <BadgeCard badge={effectiveBadge} size={size} showDetails={showDetails} />;
